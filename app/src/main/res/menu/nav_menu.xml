@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/listPoints"
+        android:title="Localizaciones"/>
+
+    <item
+        android:id="@+id/favPlaces"
+        android:title="Lugares Favoritos"/>
+
+    <item
+        android:id="@+id/howAddMarker"
+        android:title="Añade puntos"/>
+
+</menu>

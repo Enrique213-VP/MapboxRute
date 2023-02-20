@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">MapboxRoute</string>
+    <string name="open">Open</string>
+    <string name="close">Close</string>
+    <string name="mapbox_access_token">sk.eyJ1Ijoic3ZhcGUyMTMiLCJhIjoiY2xlN2FzM2V5MDNxYjNvbzQ0aGxlZDIxaiJ9.xRKaCQcr0bdPXbIDqTiKSQ</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="put_name_location">Coloca un nombre</string>
+    <string name="title_put_name">Quieres agregar este lugar?</string>
+    <string name="acept">Aceptar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="message_put_marker">Manten pulsada la pantalla en el mapa para agregar un lugar, luego, lo puedes mirar en tus lugares favoritos!</string>
 </resources>
