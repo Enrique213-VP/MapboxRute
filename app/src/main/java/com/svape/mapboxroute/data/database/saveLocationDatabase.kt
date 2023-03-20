@@ -1,12 +1,23 @@
 package com.svape.mapboxroute.data.database
 
-import androidx.room.Database
-import androidx.room.RoomDatabase
-import com.svape.mapboxroute.data.database.dao.saveLocationDao
-import com.svape.mapboxroute.data.database.entities.saveLocationEntity
+import android.content.Context
+import android.database.sqlite.SQLiteDatabase
+import android.database.sqlite.SQLiteOpenHelper
+import com.svape.mapboxroute.core.Constants.TABLE_FAVORITE
 
-@Database(entities = [saveLocationEntity::class], version = 1)
-abstract class saveLocationDatabase: RoomDatabase() {
+open class SaveLocationDatabase(context: Context) :
+    SQLiteOpenHelper(context, "MapsDataBase", null, 1) {
 
-    abstract fun getSaveLocationDao(): saveLocationDao
+    private val createTable = "CREATE TABLE $TABLE_FAVORITE(" +
+            "name STRING NOT NULL, " +
+            "longitude DOUBLE NOT NULL," +
+            " latitude DOUBLE NOT NULL)";
+
+    override fun onCreate(db: SQLiteDatabase?) {
+        db!!.execSQL(createTable)
+    }
+
+    override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
+
+    }
 }

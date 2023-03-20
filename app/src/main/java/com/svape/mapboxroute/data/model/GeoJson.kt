@@ -5,89 +5,98 @@ import com.google.gson.annotations.SerializedName
 
 data class GeoJson(
     @SerializedName("features")
-    val features: List<Feature> = listOf(),
+    val features: List<Feature>,
     @SerializedName("type")
-    val type: String = ""
-) {
+    val type: String
+){
     data class Feature(
+        @SerializedName("geometry")
+        val geometry: List<Geometry>,
         @SerializedName("properties")
-        val properties: List<Properties> = listOf(),
+        val properties: List<Properties>,
         @SerializedName("type")
-        val type: String = ""
+        val type: String
     ) {
         data class Properties(
             @SerializedName("adm0_a3")
-            val adm0A3: String = "",
+            val adm0A3: String,
             @SerializedName("adm0cap")
-            val adm0cap: Int = -1,
+            val adm0cap: Int,
             @SerializedName("adm0name")
-            val adm0name: String = "",
+            val adm0name: String,
             @SerializedName("adm1name")
-            val adm1name: String = "",
+            val adm1name: String,
             @SerializedName("capalt")
-            val capalt: Int = -1,
+            val capalt: Int,
             @SerializedName("capin")
-            val capin: String = "",
+            val capin: String,
             @SerializedName("changed")
-            val changed: Int = -1,
+            val changed: Int,
             @SerializedName("checkme")
-            val checkme: Int = -1,
+            val checkme: Int,
             @SerializedName("diffascii")
-            val diffascii: Int = -1,
+            val diffascii: Int,
             @SerializedName("diffnote")
-            val diffnote: String = "",
+            val diffnote: String,
             @SerializedName("featureclass")
-            val featureclass: String = "",
+            val featureclass: String,
             @SerializedName("geonameid")
-            val geonameid: Int = -1,
+            val geonameid: Int,
             @SerializedName("iso_a2")
-            val isoA2: String = "",
+            val isoA2: String,
             @SerializedName("labelrank")
-            val labelrank: Int = -1,
+            val labelrank: Int,
             @SerializedName("latitude")
-            val latitude: Double = 0.0,
+            val latitude: Double,
             @SerializedName("longitude")
-            val longitude: Double = 0.0,
+            val longitude: Double,
             @SerializedName("ls_match")
-            val lsMatch: Int = -1,
+            val lsMatch: Int,
             @SerializedName("ls_name")
-            val lsName: String = "",
+            val lsName: String,
             @SerializedName("megacity")
-            val megacity: Int = -1,
+            val megacity: Int,
             @SerializedName("meganame")
-            val meganame: String = "",
+            val meganame: String,
             @SerializedName("name")
-            val name: String = "",
+            val name: String,
             @SerializedName("namealt")
-            val namealt: String = "",
+            val namealt: String,
             @SerializedName("nameascii")
-            val nameascii: String = "",
+            val nameascii: String,
             @SerializedName("namediff")
-            val namediff: Int = -1,
+            val namediff: Int,
             @SerializedName("namepar")
-            val namepar: String = "",
+            val namepar: String,
             @SerializedName("natscale")
-            val natscale: Int = -1,
+            val natscale: Int,
             @SerializedName("note")
-            val note: String = "",
+            val note: String,
             @SerializedName("pop_max")
-            val popMax: Int = -1,
+            val popMax: Int,
             @SerializedName("pop_min")
-            val popMin: Int = -1,
+            val popMin: Int,
             @SerializedName("pop_other")
-            val popOther: Int = -1,
+            val popOther: Int,
             @SerializedName("rank_max")
-            val rankMax: Int = -1,
+            val rankMax: Int,
             @SerializedName("rank_min")
-            val rankMin: Int = -1,
+            val rankMin: Int,
             @SerializedName("scalerank")
-            val scalerank: Int = -1,
+            val scalerank: Int,
             @SerializedName("sov0name")
-            val sov0name: String = "",
+            val sov0name: String,
             @SerializedName("sov_a3")
-            val sovA3: String = "",
+            val sovA3: String,
             @SerializedName("worldcity")
-            val worldcity: Int = -1
+            val worldcity: Int
+        )
+
+        data class Geometry(
+            @SerializedName("coordinates")
+            val coordinates: List<Double>,
+            @SerializedName("type")
+            val type: String
         )
     }
 }

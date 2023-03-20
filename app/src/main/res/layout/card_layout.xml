@@ -38,15 +38,47 @@
             android:textSize="30sp"/>
 
         <TextView
-            android:id="@+id/longLatLocation"
+            android:id="@+id/longTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Point"
+            android:text="Longitud: "
             android:textColor="@color/white"
             android:textStyle="bold"
             android:layout_toEndOf="@id/itemImage"
             android:layout_toRightOf="@id/itemImage"
             android:layout_below="@id/nameLocation"/>
+        <TextView
+            android:id="@+id/longLocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:paddingStart="8dp"
+            android:layout_toEndOf="@id/longTitle"
+            android:layout_toRightOf="@id/longTitle"
+            android:text="0.911"
+            android:layout_below="@id/nameLocation"/>
+
+        <TextView
+            android:id="@+id/latTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Latitud: "
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:layout_toRightOf="@id/itemImage"
+            android:layout_below="@id/longTitle"/>
+        <TextView
+            android:id="@+id/latLocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:paddingStart="8dp"
+            android:layout_toEndOf="@id/longTitle"
+            android:layout_toRightOf="@id/longTitle"
+            android:text="0.001"
+            android:layout_below="@id/longLocation"/>
 
         <Button
             android:id="@+id/locationP"
@@ -56,7 +88,7 @@
             android:backgroundTint="@color/secondaryLightColor"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:layout_below="@id/longLatLocation"/>
+            android:layout_below="@id/longTitle"/>
 
 
     </RelativeLayout>
