@@ -7,7 +7,6 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
-import android.view.Menu
 import android.view.MenuItem
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.EditText
@@ -22,7 +21,6 @@ import com.mapbox.android.gestures.MoveGestureDetector
 import com.mapbox.geojson.Point
 import com.mapbox.maps.*
 import com.mapbox.maps.extension.style.expressions.generated.Expression
-import com.mapbox.maps.extension.style.style
 import com.mapbox.maps.plugin.LocationPuck2D
 import com.mapbox.maps.plugin.animation.CameraAnimatorOptions
 import com.mapbox.maps.plugin.animation.camera
@@ -39,11 +37,9 @@ import com.svape.mapboxroute.data.database.entitie.SaveLocationEntity
 import com.svape.mapboxroute.databinding.ActivityMainBinding
 import com.svape.mapboxroute.ui.favorite.FavoritePlacesActivity
 import com.svape.mapboxroute.ui.location.LocationActivity
-import dagger.hilt.android.AndroidEntryPoint
 import java.lang.ref.WeakReference
 import java.util.*
 
-@AndroidEntryPoint
 class MainActivity : BaseActivity(), OnMapClickListener, OnMapLongClickListener {
 
     private lateinit var binding: ActivityMainBinding
@@ -56,12 +52,13 @@ class MainActivity : BaseActivity(), OnMapClickListener, OnMapLongClickListener 
     private lateinit var floatingActionButtonUser: FloatingActionButton
     private lateinit var floatingActionButtonMap: FloatingActionButton
     private var listLocations = arrayListOf<Point>()
-    private var listAnimationLocations = arrayListOf<Point>()
     private var listName = arrayListOf<String>()
+
 
     private val onIndicatorBearingChangedListener = OnIndicatorBearingChangedListener {
         mapView.getMapboxMap().setCamera(CameraOptions.Builder().bearing(it).build())
     }
+
 
     private val onIndicatorPositionChangedListener = OnIndicatorPositionChangedListener {
         mapView.getMapboxMap().setCamera(CameraOptions.Builder().center(it).build())
@@ -70,13 +67,16 @@ class MainActivity : BaseActivity(), OnMapClickListener, OnMapLongClickListener 
 
     private val responseLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
+
             if (activityResult.resultCode == RESULT_OK) {
                 val longitude = activityResult.data?.getDoubleExtra("longitude", -74.0833439552)
                 val latitude = activityResult.data?.getDoubleExtra("latitude", 4.598369421147822)
                 val name = activityResult.data?.getStringExtra("name")
+
                 if (longitude != null && latitude != null && name != null) {
                     addAnnotationToMap(longitude, latitude, name)
                 }
+
                 binding.mapView.getMapboxMap().setCamera(
                     CameraOptions.Builder().center(Point.fromLngLat(longitude!!, latitude!!))
                         .build()
@@ -247,6 +247,7 @@ class MainActivity : BaseActivity(), OnMapClickListener, OnMapLongClickListener 
         pulsingLayerColor(74.0, 5.0, "ss")
     }
 
+
     private fun pulsingLayerColor(long: Double, lat: Double, name: String) {
 
         var pointLayer = ValueAnimator.ofObject(
@@ -262,7 +263,7 @@ class MainActivity : BaseActivity(), OnMapClickListener, OnMapLongClickListener 
 
     }
 
-    private fun goToFavoriteLocations(){
+    private fun goToFavoriteLocations() {
         val intent = Intent(this, FavoritePlacesActivity::class.java)
         responseLauncher.launch(intent)
     }

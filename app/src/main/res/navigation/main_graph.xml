@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_graph"
+    app:startDestination="@id/geoFragment">
+
+    <fragment
+        android:id="@+id/geoFragment"
+        android:name="com.svape.mapboxroute.ui.location.fragmentlocation.LocationFragment"
+        android:label="Movies"
+        tools:layout="@layout/fragment_location">
+        <action
+            android:id="@+id/action_geoFragment_to_mainActivity"
+            app:destination="@id/mainActivity" />
+    </fragment>
+    <activity
+        android:id="@+id/mainActivity"
+        android:name="com.svape.mapboxroute.ui.MainActivity"
+        android:label="activity_main"
+        tools:layout="@layout/activity_main" >
+        <argument
+            android:name="name"
+            app:argType="string" />
+        <argument
+            android:name="longitude"
+            app:argType="float" />
+        <argument
+            android:name="latitude"
+            app:argType="float" />
+    </activity>
+</navigation>
