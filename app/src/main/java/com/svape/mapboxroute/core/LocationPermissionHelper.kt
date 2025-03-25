@@ -2,15 +2,15 @@ package com.svape.mapboxroute.core
 
 import android.app.Activity
 import android.widget.Toast
-import com.mapbox.common.location.compat.permissions.PermissionsListener
-import com.mapbox.common.location.compat.permissions.PermissionsManager
+import com.mapbox.android.core.permissions.PermissionsManager
+import com.mapbox.android.core.permissions.PermissionsListener
 import java.lang.ref.WeakReference
 
 class LocationPermissionHelper(val activity: WeakReference<Activity>) {
     private lateinit var permissionsManager: PermissionsManager
 
     fun checkPermissions(onMapReady: () -> Unit) {
-        if (PermissionsManager.areLocationPermissionsGranted(activity.get())) {
+        if (activity.get()?.let { PermissionsManager.areLocationPermissionsGranted(it) } == true) {
             onMapReady()
         } else {
             permissionsManager = PermissionsManager(object : PermissionsListener {
@@ -29,7 +29,7 @@ class LocationPermissionHelper(val activity: WeakReference<Activity>) {
                     }
                 }
             })
-            permissionsManager.requestLocationPermissions(activity.get())
+            activity.get()?.let { permissionsManager.requestLocationPermissions(it) }
         }
     }
 

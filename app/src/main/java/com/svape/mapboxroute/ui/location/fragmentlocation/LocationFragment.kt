@@ -1,5 +1,7 @@
 package com.svape.mapboxroute.ui.location.fragmentlocation
 
+import android.app.Activity.RESULT_OK
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -18,15 +20,12 @@ import com.svape.mapboxroute.repository.GeoRepositoryImp
 import com.svape.mapboxroute.repository.RetrofitClient
 import com.svape.mapboxroute.ui.location.adapter.GeoAdapter
 
-
 class LocationFragment : Fragment(R.layout.fragment_location), GeoAdapter.OnGeoClickListener {
 
     private lateinit var binding: FragmentLocationBinding
     private val viewModel by viewModels<GeoViewModel> {
         GeoViewModelFactory(GeoRepositoryImp(GeoDataSource(RetrofitClient.webService)))
     }
-    private lateinit var dialogMap: AlertDialog.Builder
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -48,16 +47,29 @@ class LocationFragment : Fragment(R.layout.fragment_location), GeoAdapter.OnGeoC
                     Log.d("DataFind", "${result.exception}")
                 }
             }
-
         })
     }
 
     override fun onGeoClick(geo: Features) {
-        dialogMap = AlertDialog.Builder(requireContext())
-        dialogMap.setTitle("El lugar que elegiste!")
-            .setMessage("Nombre: ${geo.properties.name}, longitud: ${geo.properties.longitude}")
-            .setPositiveButton("Vale") { dialog, id ->
-            }
-            .show()
+        // Verificar si los datos son nulos
+        Log.d("LocationFragment", "Geo clicked: $geo")
+
+        // Obtener coordenadas directamente de properties
+        val longitude = geo.properties.longitude
+        val latitude = geo.properties.latitude
+        val name = geo.properties.name
+
+        Log.d("LocationFragment", "Longitude: $longitude, Latitude: $latitude, Name: $name")
+
+        // Crear un intent para devolver a MainActivity con los detalles de ubicación
+        val returnIntent = Intent().apply {
+            putExtra("longitude", longitude)
+            putExtra("latitude", latitude)
+            putExtra("name", name)
+        }
+
+        // Establecer el resultado y finalizar la actividad
+        requireActivity().setResult(RESULT_OK, returnIntent)
+        requireActivity().finish()
     }
 }

@@ -14,7 +14,6 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.GravityCompat
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.mapbox.android.gestures.MoveGestureDetector
@@ -32,6 +31,8 @@ import com.mapbox.maps.plugin.locationcomponent.*
 import com.mapbox.maps.viewannotation.ViewAnnotationManager
 import com.svape.mapboxroute.R
 import com.svape.mapboxroute.core.BaseActivity
+import com.svape.mapboxroute.core.BitmapUtils
+import com.svape.mapboxroute.core.BitmapUtils.bitmapFromDrawableRes
 import com.svape.mapboxroute.core.LocationPermissionHelper
 import com.svape.mapboxroute.data.database.entitie.SaveLocationEntity
 import com.svape.mapboxroute.databinding.ActivityMainBinding
@@ -193,12 +194,12 @@ class MainActivity : BaseActivity(), OnMapClickListener, OnMapLongClickListener 
         bitmapFromDrawableRes(
             this,
             R.drawable.red_marker
-        )?.let {
+        )?.let { bitmap ->
             val annotationApi = binding.mapView.annotations
             val pointAnnotationManager = annotationApi.createPointAnnotationManager()
             val pointAnnotationOptions: PointAnnotationOptions = PointAnnotationOptions()
                 .withPoint(Point.fromLngLat(long, lat))
-                .withIconImage(it)
+                .withIconImage(bitmap)  // Use bitmap instead of drawable
                 .withTextField(name)
                 .withTextColor(getColor(R.color.white))
                 .withTextSize(20.5)
@@ -211,12 +212,12 @@ class MainActivity : BaseActivity(), OnMapClickListener, OnMapLongClickListener 
         bitmapFromDrawableRes(
             this,
             R.drawable.marker_purple
-        )?.let {
+        )?.let { bitmap ->
             val annotationApi = binding.mapView.annotations
             val pointAnnotationManager = annotationApi.createPointAnnotationManager()
             val pointAnnotationOptions: PointAnnotationOptions = PointAnnotationOptions()
                 .withPoint(Point.fromLngLat(long, lat))
-                .withIconImage(it)
+                .withIconImage(bitmap)  // Use bitmap instead of drawable
                 .withTextField(name)
                 .withTextColor(getColor(R.color.white))
                 .withTextSize(20.5)
@@ -294,13 +295,17 @@ class MainActivity : BaseActivity(), OnMapClickListener, OnMapLongClickListener 
             this.pulsingMaxRadius = 80.0F
             this.pulsingColor = Color.parseColor("#FF3F51B5")
             this.locationPuck = LocationPuck2D(
-                bearingImage = AppCompatResources.getDrawable(
-                    this@MainActivity,
-                    com.mapbox.maps.R.drawable.mapbox_user_puck_icon,
+                bearingImage = ImageHolder.from(
+                    BitmapUtils.bitmapFromDrawableRes(
+                        this@MainActivity,
+                        com.mapbox.maps.R.drawable.mapbox_user_puck_icon
+                    )!!
                 ),
-                shadowImage = AppCompatResources.getDrawable(
-                    this@MainActivity,
-                    com.mapbox.maps.R.drawable.mapbox_user_icon_shadow,
+                shadowImage = ImageHolder.from(
+                    BitmapUtils.bitmapFromDrawableRes(
+                        this@MainActivity,
+                        com.mapbox.maps.R.drawable.mapbox_user_icon_shadow
+                    )!!
                 ),
                 scaleExpression = Expression.interpolate {
                     linear()

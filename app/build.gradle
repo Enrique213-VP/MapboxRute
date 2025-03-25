@@ -7,12 +7,12 @@ plugins {
 
 android {
     namespace 'com.svape.mapboxroute'
-    compileSdk 33
+    compileSdk 35
 
     defaultConfig {
         applicationId "com.svape.mapboxroute"
         minSdk 24
-        targetSdk 33
+        targetSdk 35
         versionCode 1
         versionName "1.0"
 
@@ -46,7 +46,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
     //Networking
-    implementation 'com.amitshekhar.android:android-networking:1.0.2'
+    //implementation 'com.amitshekhar.android:android-networking:1.0.2'
 
     // Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
@@ -82,8 +82,7 @@ dependencies {
 
     //Mapbox
     implementation "com.mapbox.maps:android:$mapboxMaps"
-    implementation "com.mapbox.navigation:ui-dropin:2.9.2"
-    implementation "com.mapbox.navigation:android:2.9.2"
+    implementation 'com.mapbox.extension:maps-compose:11.10.2'
 
     //NavComponent
     // Kotlin
