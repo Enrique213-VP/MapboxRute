@@ -20,9 +20,12 @@ import com.mapbox.android.gestures.MoveGestureDetector
 import com.mapbox.geojson.Point
 import com.mapbox.maps.*
 import com.mapbox.maps.extension.style.expressions.generated.Expression
+import com.mapbox.maps.extension.style.layers.properties.generated.TextAnchor
 import com.mapbox.maps.plugin.LocationPuck2D
 import com.mapbox.maps.plugin.animation.CameraAnimatorOptions
+import com.mapbox.maps.plugin.animation.MapAnimationOptions
 import com.mapbox.maps.plugin.animation.camera
+import com.mapbox.maps.plugin.animation.easeTo
 import com.mapbox.maps.plugin.annotation.annotations
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
 import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
@@ -68,23 +71,43 @@ class MainActivity : BaseActivity(), OnMapClickListener, OnMapLongClickListener 
 
     private val responseLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
-
             if (activityResult.resultCode == RESULT_OK) {
                 val longitude = activityResult.data?.getDoubleExtra("longitude", -74.0833439552)
                 val latitude = activityResult.data?.getDoubleExtra("latitude", 4.598369421147822)
                 val name = activityResult.data?.getStringExtra("name")
 
-                if (longitude != null && latitude != null && name != null) {
-                    addAnnotationToMap(longitude, latitude, name)
-                }
+                Log.d("MainActivity", "Valores recibidos - Longitud: $longitude, Latitud: $latitude, Nombre: $name")
 
-                binding.mapView.getMapboxMap().setCamera(
-                    CameraOptions.Builder().center(Point.fromLngLat(longitude!!, latitude!!))
-                        .build()
-                )
-            } else {
-                onMapReady()
+                binding.mapView.post {
+                    if (::mapView.isInitialized) {
+                        // Remove previous camera change listeners to prevent default position reset
+                        mapView.location.removeOnIndicatorPositionChangedListener(onIndicatorPositionChangedListener)
+                        mapView.location.removeOnIndicatorBearingChangedListener(onIndicatorBearingChangedListener)
+
+                        // Move camera and add annotation
+                        binding.mapView.getMapboxMap().easeTo(
+                            CameraOptions.Builder()
+                                .center(Point.fromLngLat(longitude!!, latitude!!))
+                                .zoom(14.0)
+                                .pitch(0.0)
+                                .bearing(0.0)
+                                .build(),
+                            MapAnimationOptions.mapAnimationOptions {
+                                duration(2000)
+                            }
+                        )
+
+                        // Clear existing annotations if needed
+                        binding.mapView.annotations.createPointAnnotationManager().deleteAll()
+
+                        // Add new annotation
+                        addAnnotationToMap(longitude, latitude, name!!)
+                    } else {
+                        Log.e("MainActivity", "El mapa aún no está inicializado")
+                    }
+                }
             }
+            // Remove onMapReady() call from else block
         }
 
     private val onMoveListener = object : OnMoveListener {
@@ -138,7 +161,7 @@ class MainActivity : BaseActivity(), OnMapClickListener, OnMapLongClickListener 
                             Toast.LENGTH_LONG
                         ).show()
                         val intent = Intent(this@MainActivity, LocationActivity::class.java)
-                        startActivity(intent)
+                        responseLauncher.launch(intent)
                     }
                     R.id.favPlaces -> {
                         Toast.makeText(
@@ -199,10 +222,15 @@ class MainActivity : BaseActivity(), OnMapClickListener, OnMapLongClickListener 
             val pointAnnotationManager = annotationApi.createPointAnnotationManager()
             val pointAnnotationOptions: PointAnnotationOptions = PointAnnotationOptions()
                 .withPoint(Point.fromLngLat(long, lat))
-                .withIconImage(bitmap)  // Use bitmap instead of drawable
+                .withIconImage(bitmap)
                 .withTextField(name)
                 .withTextColor(getColor(R.color.white))
-                .withTextSize(20.5)
+                .withTextSize(14.0)  // Reducir tamaño de texto
+                .withTextOffset(arrayOf(0.0, 2.0).toList())  // Ajustar posición del texto
+                .withTextHaloColor(getColor(R.color.black))  // Añadir halo para mejor legibilidad
+                .withTextHaloWidth(1.0)  // Ancho del halo
+                .withTextAnchor(TextAnchor.TOP)  // Anclar texto en la parte superior
+
             pointAnnotationManager.create(pointAnnotationOptions)
         }
         Log.d("Listafavo", "$listLocations , $listName")
@@ -217,10 +245,15 @@ class MainActivity : BaseActivity(), OnMapClickListener, OnMapLongClickListener 
             val pointAnnotationManager = annotationApi.createPointAnnotationManager()
             val pointAnnotationOptions: PointAnnotationOptions = PointAnnotationOptions()
                 .withPoint(Point.fromLngLat(long, lat))
-                .withIconImage(bitmap)  // Use bitmap instead of drawable
+                .withIconImage(bitmap)
                 .withTextField(name)
                 .withTextColor(getColor(R.color.white))
-                .withTextSize(20.5)
+                .withTextSize(14.0)
+                .withTextOffset(arrayOf(0.0, 2.0).toList())
+                .withTextHaloColor(getColor(R.color.black))
+                .withTextHaloWidth(1.0)
+                .withTextAnchor(TextAnchor.TOP)
+
             pointAnnotationManager.create(pointAnnotationOptions)
         }
         Log.d("Listafavo", "$listLocations , $listName")
@@ -228,10 +261,16 @@ class MainActivity : BaseActivity(), OnMapClickListener, OnMapLongClickListener 
 
 
     private fun onMapReady() {
-        addAnnotationToMap(-74.0833439552, 4.598369421147822, "Bogota")
-        addAnnotationToMap(-75.27496409801941, 4.480763954968083, "Ibague")
-        addAnnotationToMap(-75.61316341608345, 6.256808292282173, "Medallo")
-        addAnnotationToMapPulsing(-74.0833439552, 5.598369421147822, "Near bogota")
+        initLocationComponent()
+        setupGesturesListener()
+
+
+        if (listLocations.isEmpty()) {
+            addAnnotationToMap(-74.0833439552, 4.598369421147822, "Bogota")
+            addAnnotationToMap(-75.27496409801941, 4.480763954968083, "Ibague")
+            addAnnotationToMap(-75.61316341608345, 6.256808292282173, "Medallo")
+            addAnnotationToMapPulsing(-74.0833439552, 5.598369421147822, "Near bogota")
+        }
 
         viewAnnotationManager = binding.mapView.viewAnnotationManager
 
@@ -241,11 +280,10 @@ class MainActivity : BaseActivity(), OnMapClickListener, OnMapLongClickListener 
                 .build()
         )
 
-        initLocationComponent()
-        setupGesturesListener()
-        animateCameraDelayed()
-        //test
-        pulsingLayerColor(74.0, 5.0, "ss")
+        // Only animate camera if no specific location is selected
+        if (listLocations.isEmpty()) {
+            animateCameraDelayed()
+        }
     }
 
 

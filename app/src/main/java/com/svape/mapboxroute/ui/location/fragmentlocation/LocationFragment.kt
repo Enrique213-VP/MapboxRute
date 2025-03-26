@@ -6,7 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.View
-import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.svape.mapboxroute.R
@@ -23,6 +23,7 @@ import com.svape.mapboxroute.ui.location.adapter.GeoAdapter
 class LocationFragment : Fragment(R.layout.fragment_location), GeoAdapter.OnGeoClickListener {
 
     private lateinit var binding: FragmentLocationBinding
+    private lateinit var geoAdapter: GeoAdapter
     private val viewModel by viewModels<GeoViewModel> {
         GeoViewModelFactory(GeoRepositoryImp(GeoDataSource(RetrofitClient.webService)))
     }
@@ -30,6 +31,8 @@ class LocationFragment : Fragment(R.layout.fragment_location), GeoAdapter.OnGeoC
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentLocationBinding.bind(view)
+
+        setupSearchView()
 
         viewModel.fetchGeoJson().observe(viewLifecycleOwner, Observer { result ->
             when (result) {
@@ -39,8 +42,8 @@ class LocationFragment : Fragment(R.layout.fragment_location), GeoAdapter.OnGeoC
                 is Resource.Success -> {
                     binding.progressBar.visibility = View.GONE
 
-                    binding.rvGeoJson.adapter =
-                        GeoAdapter(result.data.features, this@LocationFragment)
+                    geoAdapter = GeoAdapter(result.data.features, this@LocationFragment)
+                    binding.rvGeoJson.adapter = geoAdapter
                 }
                 is Resource.Failure -> {
                     binding.progressBar.visibility = View.GONE
@@ -50,26 +53,36 @@ class LocationFragment : Fragment(R.layout.fragment_location), GeoAdapter.OnGeoC
         })
     }
 
+    private fun setupSearchView() {
+        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                geoAdapter.filter.filter(newText)
+                return true
+            }
+        })
+    }
+
     override fun onGeoClick(geo: Features) {
-        // Verificar si los datos son nulos
         Log.d("LocationFragment", "Geo clicked: $geo")
 
-        // Obtener coordenadas directamente de properties
         val longitude = geo.properties.longitude
         val latitude = geo.properties.latitude
         val name = geo.properties.name
 
-        Log.d("LocationFragment", "Longitude: $longitude, Latitude: $latitude, Name: $name")
+        Log.d("LocationFragment", "Valores enviados - Longitud: $longitude, Latitud: $latitude, Nombre: $name")
 
-        // Crear un intent para devolver a MainActivity con los detalles de ubicación
         val returnIntent = Intent().apply {
             putExtra("longitude", longitude)
             putExtra("latitude", latitude)
             putExtra("name", name)
         }
 
-        // Establecer el resultado y finalizar la actividad
         requireActivity().setResult(RESULT_OK, returnIntent)
+        Log.d("LocationFragment", "Resultado enviado a MainActivity")
         requireActivity().finish()
     }
 }
